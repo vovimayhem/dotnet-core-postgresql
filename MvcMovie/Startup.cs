@@ -30,7 +30,7 @@ namespace MvcMovie
             ////////////////////////////////////////////////////////////////////////
             // WRITE ENVIRONMENT VARIABLES TO THE LOG
             ////////////////////////////////////////////////////////////////////////
-            Console.WriteLine("List of environment variables:");
+            Console.WriteLine("[Startup] List of environment variables:");
             var enumerator = Environment.GetEnvironmentVariables().GetEnumerator();
             while (enumerator.MoveNext())
             {
@@ -51,7 +51,7 @@ namespace MvcMovie
             }
   
             // WRITE CONNECTION STRING TO THE LOG
-            Console.WriteLine("Connection String:" + connectionString);
+            Console.WriteLine("[Startup] Connection String:" + connectionString);
 
             // NOW THAT WE HAVE OUR CONNECTION STRING
             // WE CAN ESTABLISH OUR DB CONTEXT
