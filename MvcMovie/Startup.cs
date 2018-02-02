@@ -57,7 +57,7 @@ namespace MvcMovie
             // WE CAN ESTABLISH OUR DB CONTEXT
             services.AddDbContext<MvcMovieContext>
             (
-		        opts => opts.UseNpgsql(connectionString)
+		        opts => opts.UseMySQL(connectionString)
 		    );
         }
 

@@ -1,6 +1,6 @@
 ---
 applications:
-- name: mvcmovie
+- name: MvcMovie
   buildpack: dotnet_core_buildpack
   random-route: true
   memory: 512M
@@ -9,4 +9,4 @@ applications:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
     ASPNETCORE_ENVIRONMENT: Development
 services:
- - moviedb  
+ - mysqldb
