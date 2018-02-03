@@ -30,12 +30,12 @@ namespace MvcMovie
             ////////////////////////////////////////////////////////////////////////
             // WRITE ENVIRONMENT VARIABLES TO THE LOG
             ////////////////////////////////////////////////////////////////////////
-            Console.WriteLine("[Startup] List of environment variables:");
-            var enumerator = Environment.GetEnvironmentVariables().GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                Console.WriteLine($"{enumerator.Key,5}:{enumerator.Value,100}");
-            }
+            // Console.WriteLine("[Startup] List of environment variables:");
+            // var enumerator = Environment.GetEnvironmentVariables().GetEnumerator();
+            // while (enumerator.MoveNext())
+            // {
+            //     Console.WriteLine($"{enumerator.Key,5}:{enumerator.Value,100}");
+            // }
             ////////////////////////////////////////////////////////////////////////
 
             String connectionString = null;
@@ -51,8 +51,10 @@ namespace MvcMovie
             }
   
             // WRITE CONNECTION STRING TO THE LOG
-            Console.WriteLine("[Startup] Connection String:" + connectionString);
-
+            Console.WriteLine("********************************************************************************");
+            Console.WriteLine("[Startup] Connection String: " + connectionString);
+            Console.WriteLine("********************************************************************************");
+            
             // NOW THAT WE HAVE OUR CONNECTION STRING
             // WE CAN ESTABLISH OUR DB CONTEXT
             services.AddDbContext<MvcMovieContext>
@@ -83,7 +85,7 @@ namespace MvcMovie
             });
         }
 
-        public String BuildConnectionString()
+        private String BuildConnectionString()
         {
             String connectionString = null;
                                
