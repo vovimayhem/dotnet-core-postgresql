@@ -38,29 +38,24 @@ namespace MvcMovie
             // }
             ////////////////////////////////////////////////////////////////////////
 
-            String connectionString = null;
+
+            String databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
             // CHECK FOR LOCAL 'LOCAL_CONNECTION_STRING' ENVIRONMENT VARIABLE
             // (in case we're running on localhost)
-            connectionString = Environment.GetEnvironmentVariable("LOCAL_CONNECTION_STRING");
- 
-            // IF connectionString IS NULL, WE MUST BE RUNNING IN THE CLOUD,
-            // (either CLOUD.GOV or Cloud Foundry)
-            if (connectionString == null) {
-                connectionString = BuildConnectionString();
-            }
-  
+            String connectionString = ParseDatabaseUrl(databaseUrl);
+
             // WRITE CONNECTION STRING TO THE LOG
             Console.WriteLine("********************************************************************************");
             Console.WriteLine("[Startup] Connection String: " + connectionString);
             Console.WriteLine("********************************************************************************");
-            
+
             // NOW THAT WE HAVE OUR CONNECTION STRING
             // WE CAN ESTABLISH OUR DB CONTEXT
             services.AddDbContext<MvcMovieContext>
             (
-		        opts => opts.UseMySQL(connectionString)
-		    );
+		          opts => opts.UseNpgsql(connectionString)
+	          );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,47 +80,19 @@ namespace MvcMovie
             });
         }
 
-        private String BuildConnectionString()
+        public String ParseDatabaseUrl(String databaseUrl)
         {
-            String connectionString = null;
-                               
-			//This section retrieves credentials from the VCAP_SERVICES
-			try
-			{
-				string vcapServices = System.Environment.GetEnvironmentVariable("VCAP_SERVICES");
+          Uri url = new Uri(databaseUrl);
+          String[] userAndPass = url.UserInfo.Split(':');
+          String username = userAndPass[0];
+          String password = userAndPass[1];
+          String dbName = url.AbsolutePath.Substring(1);
 
-				if (vcapServices != null)
-				{
-					dynamic json = JsonConvert.DeserializeObject(vcapServices);
-					foreach (dynamic obj in json.Children())
-					{
-
-						dynamic credentials = (((JProperty)obj).Value[0] as dynamic).credentials;
-						if (credentials != null)
-						{
-							string host = credentials.host;
-							string username = credentials.username;
-							string password = credentials.password;
-                            string port = credentials.port;
-                            string db_name = credentials.db_name;
-
-                            connectionString = "Username=" + username + ";"
-                                + "Password=" + password + ";"
-                                + "Host=" + host + ";"
-                                + "Port=" + port + ";"
-                                + "Database=" + db_name + ";Pooling=true;";
-
-                            return connectionString;
-						}
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Exception in Startup.BuildConnectionString:");
-				Console.WriteLine(e);
-            }
-            return "No Connection String";
-		}
+          return "Username=" + username + ";"
+              + "Password=" + password + ";"
+              + "Host=" + url.Host + ";"
+              + "Port=" + url.Port + ";"
+              + "Database=" + dbName + ";Pooling=true;";
+        }
     }
 }

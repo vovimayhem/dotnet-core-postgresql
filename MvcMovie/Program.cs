@@ -17,9 +17,14 @@ namespace MvcMovie
             BuildWebHost(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHost BuildWebHost(string[] args)
+        {
+            String port = Environment.GetEnvironmentVariable("PORT");
+
+            return WebHost.CreateDefaultBuilder(args)
+                .UseUrls($"http://+:{port}")
                 .UseStartup<Startup>()
                 .Build();
+        }
     }
 }

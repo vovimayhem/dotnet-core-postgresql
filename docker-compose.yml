@@ -1,0 +1,53 @@
+version: "3.4"
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+
+services:
+  postgres:
+    image: postgres:10-alpine
+    ports:
+      # We'll bind our host's port 5432 to postgres's port 5432, so we can use our database IDEs
+      # with it:
+      - ${DEMO_POSTGRES_PORT:-5432}:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data      # Mount the postgres data volume
+    networks:
+      - backend
+    environment:
+      POSTGRES_PASSWORD: 3x4mpl3
+
+  web:
+    image: vovimayhem/dotnet-core-postgresql:development
+    build:
+      context: ./MvcMovie
+      dockerfile: dev.Dockerfile
+    ports:
+    # We'll bind our host's port 5000 to the app's port 5000, so we can use our
+    # browsers to see it:
+    - published: 5000
+      target: 5000
+    depends_on:
+    - postgres
+    networks:
+    - backend
+    volumes:
+    # Mount our app code directory ("./MvcMovie") into our app containers at the
+    # "/app" folder:
+    - ./MvcMovie:/app
+
+    # Keep the stdin open, so we can attach to our app container's process
+    # and do things such as byebug, etc:
+    stdin_open: true
+
+    # Enable sending signals (CTRL+C, CTRL+P + CTRL+Q) into the container:
+    tty: true
+
+    command: dotnet watch run
+    entrypoint: /app/dev-entrypoint.sh
+    environment:
+      DATABASE_URL: postgres://postgres:3x4mpl3@postgres:5432/demo_development
+      PORT: 5000
