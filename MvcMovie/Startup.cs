@@ -88,11 +88,20 @@ namespace MvcMovie
           String password = userAndPass[1];
           String dbName = url.AbsolutePath.Substring(1);
 
-          return "Username=" + username + ";"
+          String connectionString = "Username=" + username + ";"
               + "Password=" + password + ";"
               + "Host=" + url.Host + ";"
               + "Port=" + url.Port + ";"
               + "Database=" + dbName + ";Pooling=true;";
+
+          String useSSL = Environment.GetEnvironmentVariable("DATABASE_USE_SSL");
+
+          if (!string.IsNullOrEmpty(useSSL) && useSSL == "true")
+          {
+            connectionString += "SSL Mode=Require;Trust Server Certificate=true";
+          }
+
+          return connectionString;
         }
     }
 }
