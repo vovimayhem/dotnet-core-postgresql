@@ -1,27 +1,30 @@
 ################################################################################
 # STAGE I: BUILDER
+# 1: Start from microsoft/dotnet:sdk as base:
 FROM microsoft/dotnet:sdk AS builder
 
+# 2: Set /app as the Home Directory, and set the NuGet download directory:
 ENV HOME=/app NUGET_PACKAGES=/usr/nuget/packages
 
+# 3: Set /app as the working directory:
 WORKDIR /app
 
-ADD ./Conduit.sln /app/
-ADD ./src/Conduit/Conduit.csproj /app/src/Conduit/
-ADD ./tests/Conduit.IntegrationTests/Conduit.IntegrationTests.csproj /app/tests/Conduit.IntegrationTests/
+# 4: Copy the DotNet project file so we can download the dependency packages:
+ADD ./MvcMovie.csproj /app/
 
+# 5: Restore the project's dependency packages:
 RUN dotnet restore
 
-# Build the app:
+# 6: Build the app:
 COPY . /app
-RUN cd /app/src/Conduit && dotnet publish --configuration Release
+RUN dotnet publish --configuration Release
 
 ################################################################################
 # STAGE II: PUBLISHED
 FROM microsoft/dotnet:runtime
 
-COPY --from=builder /app/src/Conduit/bin/Release/netcoreapp2.0/publish /app
+COPY --from=builder /app/bin/Release/netcoreapp2.0/publish /app
 
 WORKDIR /app
 
-CMD ["dotnet", "Conduit.dll"]
+CMD ["dotnet", "MvcMovie.dll"]
