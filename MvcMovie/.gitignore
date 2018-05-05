@@ -88,3 +88,4 @@ _[Ss]cripts
 .dotnet
 .nuget
 .local
+.*_hist*
