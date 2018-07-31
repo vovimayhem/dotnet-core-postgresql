@@ -1,7 +1,7 @@
 ################################################################################
 # STAGE I: BUILDER
 # 1: Start from microsoft/dotnet:sdk as base:
-FROM microsoft/dotnet:sdk AS builder
+FROM microsoft/dotnet:sdk AS development
 
 # 2: Set /app as the Home Directory, and set the NuGet download directory:
 ENV HOME=/app NUGET_PACKAGES=/usr/nuget/packages
@@ -15,7 +15,11 @@ ADD ./MvcMovie.csproj /app/
 # 5: Restore the project's dependency packages:
 RUN dotnet restore
 
-# 6: Build the app:
+################################################################################
+# Stage II: Builder
+FROM development AS builder
+
+# 1: Build the app:
 COPY . /app
 RUN dotnet publish --configuration Release
 

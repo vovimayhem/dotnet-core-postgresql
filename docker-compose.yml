@@ -24,7 +24,8 @@ services:
     image: vovimayhem/dotnet-core-postgresql:development
     build:
       context: ./MvcMovie
-      dockerfile: dev.Dockerfile
+      dockerfile: Dockerfile
+      target: development
     ports:
     # We'll bind our host's port 5000 to the app's port 5000, so we can use our
     # browsers to see it:
