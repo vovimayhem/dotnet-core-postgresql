@@ -1,0 +1,14 @@
+version: "2.4"
+
+services:
+  postgres:
+    image: postgres:10-alpine
+    ports:
+    # We'll bind our host's port 5432 to postgres's port 5432, so we can use
+    # our database IDEs with it:
+    - ${DEMO_POSTGRES_PORT:-5432}:5432
+    volumes:
+    # Mount the postgres data volume:
+    - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: 3x4mpl3P455w0rd

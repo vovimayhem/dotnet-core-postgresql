@@ -12,23 +12,20 @@ services:
     networks: [ "backend" ]
 
   web:
-    image: vovimayhem/dotnet-core-postgresql:development
+    image: vovimayhem/dotnet-core-postgresql:latest
     build:
       context: ./MvcMovie
       dockerfile: Dockerfile
-      target: development
+      target: release
+
     ports:
     # We'll bind our host's port 5000 to the app's port 5000, so we can use our
     # browsers to see it:
     - ${DEMO_WEB_PORT:-5000}:5000
-    depends_on:
-    - postgres
-    networks:
-    - backend
-    volumes:
-    # Mount our app code directory ("./MvcMovie") into our app containers at the
-    # "/app" folder:
-    - ./MvcMovie:/app
+
+    depends_on: [ "postgres" ]
+    networks: [ "backend" ]
+
 
     # Keep the stdin open, so we can attach to our app container's process
     # and do things such as byebug, etc:
@@ -37,8 +34,8 @@ services:
     # Enable sending signals (CTRL+C, CTRL+P + CTRL+Q) into the container:
     tty: true
 
-    command: dotnet watch run
-    entrypoint: /app/dev-entrypoint.sh
+    command: dotnet MvcMovie.dll
+
     environment:
       DATABASE_URL: postgres://postgres:3x4mpl3P455w0rd@postgres:5432/demo_development
       PORT: 5000

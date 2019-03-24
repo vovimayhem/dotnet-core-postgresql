@@ -1,5 +1,4 @@
-################################################################################
-# STAGE I: BUILDER
+# Stage I: Development =========================================================
 # 1: Start from microsoft/dotnet:sdk as base:
 FROM microsoft/dotnet:sdk AS development
 
@@ -15,20 +14,18 @@ ADD ./MvcMovie.csproj /app/
 # 5: Restore the project's dependency packages:
 RUN dotnet restore
 
-################################################################################
-# Stage II: Builder
+# Stage II: Builder ============================================================
 FROM development AS builder
 
 # 1: Build the app:
 COPY . /app
 RUN dotnet publish --configuration Release
 
-################################################################################
-# STAGE II: PUBLISHED
-FROM microsoft/dotnet:runtime
+# Stage III: Release ===========================================================
+FROM microsoft/dotnet:runtime AS release
 
 COPY --from=builder /app/bin/Release/netcoreapp2.0/publish /app
 
 WORKDIR /app
 
-CMD ["dotnet", "MvcMovie.dll"]
+CMD [ "dotnet", "MvcMovie.dll" ]
